@@ -19,8 +19,8 @@ function App() {
     },
   ];
 
+  let db: any;
   useEffect(() => {
-    let db: any;
     const request = indexedDB.open('MyTestDatabase');
     request.onerror = (event: any) => {
       console.error(`Database error: ${event.target.errorCode}`);
@@ -48,6 +48,23 @@ function App() {
     };
   }, []);
 
+  const addMoreData = (data: {
+    ssn: string;
+    name: string;
+    age: number;
+    email: string;
+  }) => {
+    const transaction = db.transaction('customers', 'readwrite');
+    const customerObjectDB = transaction.objectStore('customers');
+    const requestToAdd = customerObjectDB.add(data);
+    requestToAdd.onsuccess = (event: any) => {
+      console.log('Added');
+    };
+    requestToAdd.onerror = (event: any) => {
+      console.error(event?.target?.error?.message);
+    };
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -63,6 +80,18 @@ function App() {
         >
           Learn React
         </a>
+        <button
+          onClick={() =>
+            addMoreData({
+              ssn: '333-33-3333',
+              name: 'Ahmad 3',
+              age: 27,
+              email: 'mmrahmode7@gmail.com',
+            })
+          }
+        >
+          Add Data
+        </button>
       </header>
     </div>
   );
